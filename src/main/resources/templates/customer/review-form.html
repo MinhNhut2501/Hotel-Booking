@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout-main}">
+<head>
+    <title>Review Hotel</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h2>Review for <span th:text="${hotelName}"></span></h2>
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" th:action="@{/customer/bookings/{id}/review(id=${reviewDTO.bookingId})}" th:object="${reviewDTO}">
+                            <input type="hidden" th:field="*{bookingId}">
+                            <input type="hidden" th:field="*{hotelId}">
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="rating">Rating (1-5):</label>
+                                <select class="form-control" id="rating" th:field="*{rating}">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <p class="text-danger" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></p>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="comment">Comment:</label>
+                                <textarea class="form-control" id="comment" th:field="*{comment}" rows="5" placeholder="Enter your comment"></textarea>
+                                <p class="text-danger" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></p>
+                            </div>
+                            <div class="form-group mb-3">
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                                <a th:href="@{/customer/bookings}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

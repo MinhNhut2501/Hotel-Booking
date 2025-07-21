@@ -52,11 +52,6 @@
             const submitFormat = "yy-mm-dd"; // Format that Spring Boot expects for LocalDate
 
             // Block invalid characters for city input
-            $("#city").on("input", function () {
-                var value = $(this).val();
-                var filteredValue = value.replace(/[^A-Za-z\s'-]/g, "");
-                $(this).val(filteredValue);
-            });
 
             // Initialize checkinDate
             $("#checkinDate").datepicker({

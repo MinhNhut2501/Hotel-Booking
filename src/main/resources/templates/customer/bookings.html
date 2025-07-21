@@ -10,7 +10,10 @@
         <div class="row">
             <div class="col-md-12">
                 <h2>Your Bookings</h2>
-                <table class="table table-striped align-middle">
+
+                <div th:if="${noBookingsFound}" class="alert alert-info">No bookings found.</div>
+
+                <table th:if="${noBookingsFound == false}" class="table table-striped align-middle">
                     <thead>
                     <tr>
                         <th>City</th>
@@ -23,17 +26,21 @@
                     </thead>
                     <tbody>
                     <tr class="align-middle" th:each="booking : ${bookings}">
-                        <td th:text="${booking.hotelAddress.city}"></td>
-                        <td th:text="${booking.checkinDate}"></td>
-                        <td th:text="${booking.checkoutDate}"></td>
-                        <td th:text="${booking.hotelName}"></td>
+                        <td th:text="${booking.hotelAddress != null && booking.hotelAddress.city != null ? booking.hotelAddress.city : 'N/A'}"></td>
+                        <td th:text="${booking.checkinDate != null ? booking.checkinDate : 'N/A'}"></td>
+                        <td th:text="${booking.checkoutDate != null ? booking.checkoutDate : 'N/A'}"></td>
+                        <td th:text="${booking.hotelName != null ? booking.hotelName : 'N/A'}"></td>
                         <td th:text="'$ ' + ${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 2, 'POINT')}"></td>
                         <td>
                             <a th:href="@{/customer/bookings/{id}(id=${booking.id})}" class="btn btn-primary btn-sm">Details</a>
+                            <a th:if="${booking.checkoutDate != null and #temporals.createToday().isAfter(booking.checkoutDate)}"
+                               th:href="@{/customer/bookings/{id}/review(id=${booking.id})}"
+                               class="btn btn-success btn-sm ms-2">Review</a>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>

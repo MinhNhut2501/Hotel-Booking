@@ -48,6 +48,15 @@
                         <h5>Guest Details:</h5>
                         <p class="mb-2">Name: <span th:text="${bookingDTO.customerName}"></span></p>
                         <p class="mb-3">Email: <span th:text="${bookingDTO.customerEmail}"></span></p>
+                        <div th:if="${reviewDTO != null}">
+                            <h5>Your Review:</h5>
+                            <p><strong>Rating:</strong> <span th:text="${reviewDTO.rating}"></span></p>
+                            <p><strong>Comment:</strong></p>
+                            <p th:text="${reviewDTO.comment}"></p>
+                        </div>
+                        <div th:if="${reviewDTO == null}">
+                            <p class="text-muted">No review submitted for this booking yet.</p>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-3">
