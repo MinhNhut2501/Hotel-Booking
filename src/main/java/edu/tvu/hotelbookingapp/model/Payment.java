@@ -17,6 +17,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "payment")
 @Builder
 public class Payment {
 

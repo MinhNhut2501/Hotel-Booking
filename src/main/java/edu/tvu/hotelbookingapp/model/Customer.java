@@ -12,6 +12,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "customer")
 @Builder
 public class Customer {
 

@@ -11,6 +11,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "availability")
 @Builder
 public class Availability {
 

@@ -10,6 +10,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "admin")
 @Builder
 public class Admin {
 

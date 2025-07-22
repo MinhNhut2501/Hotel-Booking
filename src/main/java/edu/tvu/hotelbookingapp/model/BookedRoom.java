@@ -11,6 +11,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "booked_rooms")
 @Builder
 public class BookedRoom {
 
