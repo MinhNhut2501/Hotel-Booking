@@ -1,0 +1,53 @@
+name: CI/CD Hotel Booking
+
+on:
+  push:
+    branches:
+      - main # Kịch bản tự chạy khi bạn push code vào nhánh main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Bước 1: Lấy code từ GitHub về máy ảo GitHub Actions
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Bước 2: Cài đặt Java 17 để build project
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # Bước 3: Build file .jar bằng Maven (Bỏ qua Unit Test để nhanh hơn)
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      # Bước 4: SSH vào Server và thực hiện các lệnh cập nhật
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: 34.101.103.217
+          username: minhnhutwork2501
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            # 1. Đi vào thư mục chứa code trên server
+            cd /home/minhnhutwork2501/Hotel-Booking 
+
+            # 2. Cập nhật code mới nhất từ nhánh main
+            git pull origin main
+
+            # 3. Cấp quyền thực thi cho Maven Wrapper và Build lại file .jar trên server
+            chmod +x mvnw
+            ./mvnw clean package -DskipTests
+
+            # 4. Khởi động lại ứng dụng thông qua Systemd
+            # LƯU Ý: Thay 'hotel-booking.service' bằng tên thật file service của bạn
+            sudo systemctl restart hotel.service
+
+            # 5. Hiển thị trạng thái để kiểm tra kết quả
+            sudo systemctl status hotel.service --no-pager
