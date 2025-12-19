@@ -35,19 +35,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # 1. Đi vào thư mục chứa code trên server
+            # 1. Đi vào đúng thư mục bạn vừa tìm thấy
             cd /home/minhnhutwork2501/Hotel-Booking 
-
-            # 2. Cập nhật code mới nhất từ nhánh main
+            
+            # 2. Cập nhật code từ GitHub
             git pull origin main
-
-            # 3. Cấp quyền thực thi cho Maven Wrapper và Build lại file .jar trên server
+            
+            # 3. Build lại dự án (tạo file .jar mới)
             chmod +x mvnw
             ./mvnw clean package -DskipTests
-
-            # 4. Khởi động lại ứng dụng thông qua Systemd
-            # LƯU Ý: Thay 'hotel-booking.service' bằng tên thật file service của bạn
-            sudo systemctl restart hotel.service
-
-            # 5. Hiển thị trạng thái để kiểm tra kết quả
-            sudo systemctl status hotel.service --no-pager
+            
+            # 4. Khởi động lại ứng dụng
+            # Hãy chắc chắn 'hotel-booking.service' là tên đúng bạn tìm thấy ở bước trước
+            sudo systemctl restart hotel-booking.service
