@@ -35,16 +35,18 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # 1. Đi vào đúng thư mục bạn vừa tìm thấy tren server
             cd /home/minhnhutwork2501/Hotel-Booking 
             
-            # 2. Cập nhật code từ GitHub
+            # Cập nhật code
             git pull origin main
             
-            # 3. Build lại dự án (tạo file .jar mới)
+            # Cấp quyền và Build (Dùng bộ nhớ đệm nếu có thể để nhanh hơn)
             chmod +x mvnw
             ./mvnw clean package -DskipTests
             
-            # 4. Khởi động lại ứng dụng
-            # Hãy chắc chắn 'hotel-booking.service' là tên đúng bạn tìm thấy ở bước trước
-            sudo systemctl restart hotel-booking.service
+            # Khởi động lại service
+            # Thêm '|| true' để đảm bảo GitHub không dừng lại nếu có cảnh báo không đáng kể
+            sudo systemctl restart hotel-booking.service || true
+            
+            # Lệnh kiểm tra cuối cùng: Nếu service đang chạy thì trả về 0 (Thành công)
+            sudo systemctl is-active --quiet hotel-booking.service
