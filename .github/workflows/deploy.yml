@@ -3,18 +3,16 @@ name: CI/CD Hotel Booking
 on:
   push:
     branches:
-      - main # Kịch bản tự chạy khi bạn push code vào nhánh main
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Bước 1: Lấy code từ GitHub về máy ảo GitHub Actions
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Bước 2: Cài đặt Java 17 để build project
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -22,11 +20,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # Bước 3: Build file .jar bằng Maven (Bỏ qua Unit Test để nhanh hơn)
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # Bước 4: SSH vào Server và thực hiện các lệnh cập nhật
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@master
         with:
@@ -35,18 +31,24 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            # 1. Di chuyển vào thư mục dự án
             cd /home/minhnhutwork2501/Hotel-Booking 
+
+            # 2. Xử lý xung đột Git (Reset về trạng thái giống GitHub nhất)
+            git fetch --all
+            git reset --hard origin/main
             
-            # Cập nhật code
-            git pull origin main
-            
-            # Cấp quyền và Build (Dùng bộ nhớ đệm nếu có thể để nhanh hơn)
+            # 3. Cấp quyền thực thi cho Maven Wrapper
             chmod +x mvnw
+            
+            # 4. Build dự án ngay trên server để đảm bảo file .jar được cập nhật
             ./mvnw clean package -DskipTests
             
-            # Khởi động lại service
-            # Thêm '|| true' để đảm bảo GitHub không dừng lại nếu có cảnh báo không đáng kể
+            # 5. Khởi động lại Service (Thêm '|| true' để tránh lỗi dừng ngang)
             sudo systemctl restart hotel-booking.service || true
             
-            # Lệnh kiểm tra cuối cùng: Nếu service đang chạy thì trả về 0 (Thành công)
-            sudo systemctl is-active --quiet hotel-booking.service
+            # 6. Đợi 5 giây để Spring Boot bắt đầu khởi tạo
+            sleep 5
+            
+            # 7. Kiểm tra trạng thái cuối cùng (Nếu active sẽ báo thành công cho GitHub)
+            sudo systemctl is-active hotel-booking.service
