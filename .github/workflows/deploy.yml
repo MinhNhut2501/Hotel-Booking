@@ -35,7 +35,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # 1. Đi vào đúng thư mục bạn vừa tìm thấy 
+            # 1. Đi vào đúng thư mục bạn vừa tìm thấy tren server
             cd /home/minhnhutwork2501/Hotel-Booking 
             
             # 2. Cập nhật code từ GitHub
